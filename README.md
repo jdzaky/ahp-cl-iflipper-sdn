@@ -4,7 +4,6 @@ Data and code that accompany the paper *Reducing Topology Bias in AHP-Based Labe
 
 The package contains the SDN controller measurements (Ryu, ONOS, Floodlight), the AHP labels (Dataset A), the pipeline that cleans and repairs these labels with Confident Learning and iFlipper (Dataset B, the ground truth), and the scripts that produce the accuracy, fairness and feature-importance results of the paper.
 
-- Archive (DOI): `10.5281/zenodo.XXXXXXX` (to be filled in after the Zenodo release)
 - Paper: citation to be added after publication
 
 ## Repository layout
@@ -143,4 +142,4 @@ Source code is released under the MIT License (`LICENSE`). The data and result f
 
 ## How to cite
 
-Please cite the Zenodo record and the paper (details to be added after publication).
+Please cite the paper (details to be added after publication).
