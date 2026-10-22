@@ -1,0 +1,6 @@
+{
+  "original_samples": 1050,
+  "clean_samples": 833,
+  "fair_samples": 833,
+  "noise_removed": 217
+}

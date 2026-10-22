@@ -1,0 +1,165 @@
+{
+  "descriptive_a": {
+    "dataset": "Dataset A (AHP)",
+    "n_samples": 1050,
+    "Random Forest": {
+      "f1_mean": 0.4061,
+      "f1_std": 0.1084
+    },
+    "Decision Tree": {
+      "f1_mean": 0.4252,
+      "f1_std": 0.0913
+    },
+    "SVM": {
+      "f1_mean": 0.4033,
+      "f1_std": 0.1142
+    }
+  },
+  "descriptive_b": {
+    "dataset": "Dataset B (GT)",
+    "n_samples": 833,
+    "Random Forest": {
+      "f1_mean": 0.8224,
+      "f1_std": 0.0746
+    },
+    "Decision Tree": {
+      "f1_mean": 0.7464,
+      "f1_std": 0.0734
+    },
+    "SVM": {
+      "f1_mean": 0.8196,
+      "f1_std": 0.0811
+    }
+  },
+  "significance_tests": {
+    "Random Forest": {
+      "model": "Random Forest",
+      "n_pairs": 5,
+      "df": 4,
+      "scores_a": [
+        0.5787,
+        0.3199,
+        0.447,
+        0.3484,
+        0.3368
+      ],
+      "scores_b": [
+        0.8182,
+        0.887,
+        0.8848,
+        0.8186,
+        0.7035
+      ],
+      "diff_per_fold": [
+        0.2396,
+        0.5671,
+        0.4379,
+        0.4702,
+        0.3667
+      ],
+      "mean_a": 0.4061,
+      "std_a": 0.1084,
+      "mean_b": 0.8224,
+      "std_b": 0.0746,
+      "d_bar": 0.4163,
+      "s_d": 0.1223,
+      "t_stat": 7.6123,
+      "p_value": 0.0016,
+      "ci95_low": 0.2644,
+      "ci95_high": 0.5681,
+      "cohens_d": 3.4043,
+      "wilcoxon_stat": 0.0,
+      "wilcoxon_p": 0.0625,
+      "n_positive_folds": 5,
+      "p_below_alpha": true,
+      "improvement": true,
+      "criterion_met": true
+    },
+    "Decision Tree": {
+      "model": "Decision Tree",
+      "n_pairs": 5,
+      "df": 4,
+      "scores_a": [
+        0.5746,
+        0.4356,
+        0.3686,
+        0.4086,
+        0.3388
+      ],
+      "scores_b": [
+        0.7963,
+        0.7493,
+        0.8385,
+        0.68,
+        0.6679
+      ],
+      "diff_per_fold": [
+        0.2217,
+        0.3138,
+        0.4698,
+        0.2714,
+        0.3292
+      ],
+      "mean_a": 0.4252,
+      "std_a": 0.0913,
+      "mean_b": 0.7464,
+      "std_b": 0.0734,
+      "d_bar": 0.3212,
+      "s_d": 0.093,
+      "t_stat": 7.7222,
+      "p_value": 0.0015,
+      "ci95_low": 0.2057,
+      "ci95_high": 0.4366,
+      "cohens_d": 3.4535,
+      "wilcoxon_stat": 0.0,
+      "wilcoxon_p": 0.0625,
+      "n_positive_folds": 5,
+      "p_below_alpha": true,
+      "improvement": true,
+      "criterion_met": true
+    },
+    "SVM": {
+      "model": "SVM",
+      "n_pairs": 5,
+      "df": 4,
+      "scores_a": [
+        0.5671,
+        0.4245,
+        0.4123,
+        0.3612,
+        0.2514
+      ],
+      "scores_b": [
+        0.8405,
+        0.9096,
+        0.8761,
+        0.7534,
+        0.7186
+      ],
+      "diff_per_fold": [
+        0.2734,
+        0.4851,
+        0.4638,
+        0.3922,
+        0.4671
+      ],
+      "mean_a": 0.4033,
+      "std_a": 0.1142,
+      "mean_b": 0.8196,
+      "std_b": 0.0811,
+      "d_bar": 0.4163,
+      "s_d": 0.0874,
+      "t_stat": 10.6477,
+      "p_value": 0.0004,
+      "ci95_low": 0.3078,
+      "ci95_high": 0.5249,
+      "cohens_d": 4.7618,
+      "wilcoxon_stat": 0.0,
+      "wilcoxon_p": 0.0625,
+      "n_positive_folds": 5,
+      "p_below_alpha": true,
+      "improvement": true,
+      "criterion_met": true
+    }
+  }
+}
