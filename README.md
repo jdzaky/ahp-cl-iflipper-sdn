@@ -1,6 +1,6 @@
 # Fair ground truth for SDN controller selection: data and code
 
-Data and code that accompany the paper *Reducing Topology Bias in AHP-Based Labels for SDN Controller Selection Using Confident Learning and iFlipper* (J. D. Dzaky).
+Data and code that accompany the paper *Reducing Topology Bias in AHP-Based Labels for SDN Controller Selection Using Confident Learning and iFlipper* 
 
 The package contains the SDN controller measurements (Ryu, ONOS, Floodlight), the AHP labels (Dataset A), the pipeline that cleans and repairs these labels with Confident Learning and iFlipper (Dataset B, the ground truth), and the scripts that produce the accuracy, fairness and feature-importance results of the paper.
 
@@ -18,7 +18,7 @@ The package contains the SDN controller measurements (Ryu, ONOS, Floodlight), th
     ├── code/
     │   ├── 01_simulate_and_label_ahp.py          data collection (Mininet + Docker) and AHP labelling
     │   ├── 02_confident_learning_iflipper.py     Confident Learning + iFlipper (Dataset A -> Dataset B)
-    │   ├── 03_cv_f1_paired_ttest.py              5-fold weighted F1, paired t-test, CI, Cohen's d, Wilcoxon
+    │   ├── 03_cv_f1_paired_ttest.py              5-fold accuracy, macro-precision, macro-recall, weighted F1; paired t-test, 95% CI, Holm correction
     │   ├── 04_fairness_metrics.py                SPD, DI, EOD, Individual Fairness of Random Forest
     │   ├── 05_feature_importance_mdi.py          MDI feature importance, rank of the "nodes" feature
     │   
@@ -31,7 +31,10 @@ The package contains the SDN controller measurements (Ryu, ONOS, Floodlight), th
         ├── 02_cleaning_console.txt               console output of step 2
         ├── 02_pipeline_summary.json              sample counts of step 2
         ├── 03_cv_f1_paired_ttest_console.txt     console output of step 3
-        ├── 03_statistical_validation_results.json
+        ├── 03_metrics_paired_ttest_results.json  step 3: per-fold scores, t, p, Holm-adjusted p and 95% CI for every model and metric
+        ├── 03_per_fold_scores.csv                step 3: per-fold scores of the four metrics on Dataset A and Dataset B
+        ├── 03_metrics_summary.csv                step 3: mean and SD, mean difference, t, p, Holm p, 95% CI per model and metric
+        ├── 03_latex_rows.tex                     step 3: table rows used in the paper
         ├── 04_fairness_report.txt
         ├── 05_feature_importance_console.txt
         
@@ -102,35 +105,20 @@ python3 04_fairness_metrics.py
 python3 05_feature_importance_mdi.py
 ```
 
-Steps 2 to 4 write their outputs into `sdn-all-data/data/` and `sdn-all-data/results/` and overwrite the released files with the same names. Run them in a copy of the repository if you want to keep the released files. Step 5 prints its tables to the console.
+Steps 2 to 4 write their outputs into `sdn-all-data/data/` and `sdn-all-data/results/` and overwrite the released files with the same names. Step 3 writes the four files `03_metrics_paired_ttest_results.json`, `03_per_fold_scores.csv`, `03_metrics_summary.csv` and `03_latex_rows.tex`. Run them in a copy of the repository if you want to keep the released files. Step 5 prints its tables to the console.
 
-## Map from the paper to the files
+**What step 3 computes.** For Random Forest, Decision Tree and SVM it runs 5-fold `StratifiedKFold` (no shuffling) on Dataset A and on Dataset B and records accuracy, macro-precision, macro-recall and weighted F1 for every fold. For each model and metric it then runs a two-sided paired t-test on the per-fold differences (Dataset B minus Dataset A, 4 degrees of freedom) and reports the 95% confidence interval of the mean difference. The 12 p-values (3 models x 4 metrics) are adjusted together with the Holm step-down method. The console prints a sanity check: the weighted F1 means must be RF 0.4061 to 0.8224, DT 0.4252 to 0.7464 and SVM 0.4033 to 0.8196.
 
-The numbering follows the submitted manuscript.
-
-| Paper item | Produced by | File |
-|---|---|---|
-| Table 2, scenario list (175 scenarios) | `SCENARIO_GRIDS` in step 1 | `data/dataset_A_ahp.csv` (column `scenario_name`) |
-| Table 3, AHP weights | `AHPCalculator.weights` in step 1 | `data/dataset_A_ahp.csv` |
-| Table 4, model settings | `MODELS` in steps 3 and 4 | |
-| Table 5, label distribution of Dataset A | crosstab of `topology_type` and `best_controller_label` | `data/dataset_A_ahp.csv` |
-| Table 6, noise removed and labels flipped per topology | step 2 | `data/dataset_A_ahp.csv`, `data/dataset_clean_after_cl.csv`, `data/dataset_B_ground_truth.csv` |
-| Table 7, label transitions of iFlipper | step 2 | `data/dataset_clean_after_cl.csv` vs `data/dataset_B_ground_truth.csv` |
-| Section 4.2 and 4.3 numbers (217 noisy, 225 flipped, error 1,118 to 224, 2,792 pairs) | step 2 | `results/02_pipeline_summary.json`, `results/02_cleaning_console.txt` |
-| Table 8, F1 per fold, mean and standard deviation | step 3 | `results/03_statistical_validation_results.json`, `results/03_cv_f1_paired_ttest_console.txt` |
-| Table 9, paired t-test, 95% CI, Cohen's d, Wilcoxon | step 3 | `results/03_statistical_validation_results.json` |
-| Table 10, accuracy and fairness (SPD, DI, EOD, IF) | step 4 | `results/04_fairness_report.txt` |
-| Table 11, feature importance and rank of `nodes` | step 5 | `results/05_feature_importance_console.txt` |
-| Figure 4, AHP score gap of noisy and clean samples | `score_gap` column and the rows removed in step 2 | `data/dataset_A_ahp.csv`, `data/dataset_clean_after_cl.csv` |
-
-Tables 5 to 7 and Figure 4 are computed directly from the CSV files with pandas. A script for them is not part of this release yet.
 
 ## Notes on reproducibility
 
 - **Row order matters.** The 5-fold `StratifiedKFold` uses `shuffle=False`, so the folds are fixed by the row order of the CSV files. Do not sort or shuffle the files.
 - **Seeds.** All models and the 80/20 hold-out split of step 4 use `random_state=42`.
 - **Standardisation.** Steps 3 and 4 standardise the features on the whole dataset before splitting, without refitting per fold. Step 5 uses the raw features.
-- **Standard deviation.** The standard deviations printed by step 3 are sample standard deviations (`ddof=1`).
+- **Standard deviation.** The standard deviations printed by step 3 and reported in the paper are sample standard deviations (`ddof=1`). The constant `STD_DDOF` at the top of step 3 controls this.
+- **Paired tests.** Fold i of Dataset A is paired with fold i of Dataset B. The two folds are not the same test samples, because Dataset B has 833 samples with repaired labels, and the folds of one dataset share training data. The p-values (also the Holm-adjusted ones) and the confidence intervals are therefore indications of a consistent gain and not confirmed significance levels.
+- **Multiple testing.** Holm correction is applied over all 12 tests of step 3 (3 models x 4 metrics) as one family. The 95% confidence intervals are not adjusted. In the released run all 12 tests have p < 0.05 before and after correction.
+- **Macro metrics.** Macro-precision and macro-recall use `zero_division=0`. Weighted recall would equal accuracy for multi-class labels, which is why macro-recall is reported instead.
 - **Fairness audit.** Step 4 uses one 80/20 hold-out split and a Random Forest with `class_weight="balanced"`. SPD, DI and EOD are one-vs-rest per controller and reported as the worst case over the three classes. DI uses no smoothing (`di_epsilon=0`).
 - **Individual Fairness.** IF is computed as 1 minus the weighted mean of `|h(x_i) - h(x_j)|` over the 5 nearest neighbours, where `h` is the label-encoded prediction (`floodlight=0`, `onos=1`, `ryu=2`). The value therefore depends on the class encoding.
 - **Controller images** use the `latest` tag and their digests were not recorded, so a new collection run can differ from the released data.
@@ -142,4 +130,4 @@ Source code is released under the MIT License (`LICENSE`). The data and result f
 
 ## How to cite
 
-Please cite the paper (details to be added after publication).
+details to be added after publication.
